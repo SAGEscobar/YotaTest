@@ -94,6 +94,7 @@ function setAtender() {
 }
 
 function ingresarTiket() {
+
   const nombre = document.querySelector('#nombre').value,
     apellido = document.querySelector('#apellido').value,
     telefono = document.querySelector('#telefono').value,
@@ -102,9 +103,19 @@ function ingresarTiket() {
     problema = document.querySelector('#problema-expuesto').value,
     solucion = document.querySelector('#solucion-brindada').value,
     tiket = document.getElementById('idTiket').value;
+
+    if (tiket.value == "-1") {
+      swal({
+        type: 'error',
+        title: 'Error',
+        text: 'Debe seleccionar un tiket'
+      })
+      return;
+    }
+
   if (
     nombre === "" || apellido === "" || telefono === "" ||
-    direccion === "" || gestion === "" || problema === "" || solucion === "" || tiket === "-1"
+    direccion === "" || gestion === "" || problema === "" || solucion === ""
   ) {
     swal({
       type: 'error',

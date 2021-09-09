@@ -25,11 +25,15 @@ class TiketController extends AbstractController
      */
     public function index(GestionRepository $gestionRepository, RequestStack $requestStack): Response
     {
+        //comprobando autorizacion de acceso
         $session = $requestStack->getSession();
         if (!$session->get("login", null)){
             return $this->redirectToRoute('login');   
         }
+        //pidiendo todos los datos de gestiones a base de datos
         $gestiones = $gestionRepository->findAll();
+
+        //renderizando pagina con los datos debueltos por la base de datos
         return $this->render('tiket/index.html.twig', [
             'controller_name' => 'TiketController',
             'gestiones' => $gestiones,
@@ -43,6 +47,7 @@ class TiketController extends AbstractController
      */
     public function getTiketes(GestionClienteRepository $gestionClienteRepository, GestionRepository $gestionRepository, RequestStack $requestStack ): Response
     {
+        //verificando autorzacion de acceso
         $session = $requestStack->getSession();
         if (!$session->get("login", null)){
             $response = new Response(json_encode(array('error'=>'Acceso denegado')));
@@ -51,9 +56,13 @@ class TiketController extends AbstractController
 
             return $response;
         }
+        //solicitando datos de tikes no atendidos a la base de datos
         $gestionesPendientes = $gestionClienteRepository->findBy(array('atendido' => FALSE));
+        //solicitando todas las gestiones
         $gestionesData = $gestionRepository->findAll();
         $gestiones = array();
+
+        //contruyendo arreglo de gestiones con sus nombres 
         foreach($gestionesData as $gestion){
             $gestiones[] = array('id' => $gestion->getId(), 'nombreGestion'=>$gestion->getNombreGestion());
         }
@@ -65,6 +74,7 @@ class TiketController extends AbstractController
             );
         }
 
+        //construyendo respuesta exitosa
         $response = new Response(json_encode(array('success' => "datos solicitados correctamente", 'datos'=>$arr)));
         $response->headers->set('Content-Type', 'application/json');
         $response->setStatusCode(Response::HTTP_OK);
@@ -77,6 +87,7 @@ class TiketController extends AbstractController
      */
     public function nuevoTiketValidacion(GestionClienteRepository $gestionClienteRepository, TiketRepository $tiketRepository, TiketManager $tiketManager, GestionClienteManager $gestionClienteManager , Request $request, RequestStack $requestStack): Response
     {
+        //comprobando autorizacion de acceso
         $session = $requestStack->getSession();
         if (!$session->get("login", null)){
             $response = new Response(json_encode(array('error'=>'Acceso denegado')));
@@ -85,10 +96,12 @@ class TiketController extends AbstractController
 
             return $response;
         }
+        //comprobando parametros requeridos para la operacion
         if(isset($_GET['idGestionCliente'])){
             $idGestionCliente = (int)$_GET['idGestionCliente'];
             $gestionCliente = $gestionClienteRepository->findOneById($idGestionCliente);
 
+            //comprobando que el tiquet no este siendo atendido por otro usuario
             if($gestionCliente){
                 if($gestionCliente->getAtendido()){
                     $response = new Response(json_encode(
@@ -120,6 +133,8 @@ class TiketController extends AbstractController
                             )
                         )
                     ));
+
+                //creando respuesta exitosa
                 $response->headers->set('Content-Type', 'application/json');
                 $response->setStatusCode(Response::HTTP_CREATED);
 
@@ -141,11 +156,12 @@ class TiketController extends AbstractController
         }
 
         
-        $gestiones = $gestionRepository->findAll();
-        return $this->render('tiket/index.html.twig', [
-            'controller_name' => 'TiketController',
-            'gestiones' => $gestiones,
-        ]);
+        // Devolviendo datos de operacion fallida por una mala peticion
+        $response = new Response(json_encode(array('fail' => "Error obteniendo la gestion")));
+        $response->headers->set('Content-Type', 'application/json');
+        $response->setStatusCode(Response::HTTP_BAD_REQUEST);
+
+        return $response;
     }
 
     /**
@@ -153,6 +169,7 @@ class TiketController extends AbstractController
      */
     public function nuevoTiket(TiketRepository $tiketRepository, TiketManager $tiketManager, Request $request, RequestStack $requestStack): Response
     {
+        //comprobando autorizacion de acceso
         $session = $requestStack->getSession();
         if (!$session->get("login", null)){
             $response = new Response(json_encode(array('error'=>'Acceso denegado')));
@@ -161,6 +178,7 @@ class TiketController extends AbstractController
 
             return $response;
         }
+        //comprobando que todos los datos se encuentren
         $nombre = filter_var($_POST['nombre'], FILTER_SANITIZE_STRING);
         $apellido = filter_var($_POST['apellido'], FILTER_SANITIZE_STRING);
         $telefono = filter_var($_POST['telefono'], FILTER_SANITIZE_STRING);
@@ -170,7 +188,10 @@ class TiketController extends AbstractController
         $solucion = filter_var($_POST['solucion'], FILTER_SANITIZE_STRING);
         $tiketId = (int)filter_var($_POST['tiketId'], FILTER_SANITIZE_STRING);
 
-        if(true){
+        if(
+            $nombre != "" && $apellido != "" && $telefono != "" && $direccion != "" &&
+            $gestion > 0 && $problema != "" && $solucion != "" && $tiketId > 0
+            ){
             $tiket = $tiketRepository->findOneById($tiketId);
 
             if($tiket){
@@ -187,7 +208,7 @@ class TiketController extends AbstractController
                 //Creando respuesta
                 $response = new Response(json_encode(
                         array(
-                            'success' => "datos solicitados correctamente",
+                            'success' => "El tiket ha sido creado",
                             'data'=>array(
                                 'idtiket'=>$tiket->getId()
                             )
@@ -201,24 +222,25 @@ class TiketController extends AbstractController
             }
             $response = new Response(json_encode(
                 array(
-                    'error' => "La gestion ya ha sido atendida",
+                    'error' => "El tiket no existe",
                     'data'=>array(
                         'idtiket'=>$tiket->getId()
                     )
                 )
             ));
             $response->headers->set('Content-Type', 'application/json');
-            $response->setStatusCode(Response::HTTP_LOCKED);
+            $response->setStatusCode(Response::HTTP_BAD_REQUEST);
 
             return $response;
         }
 
         
-        $gestiones = $gestionRepository->findAll();
-        return $this->render('tiket/index.html.twig', [
-            'controller_name' => 'TiketController',
-            'gestiones' => $gestiones,
-        ]);
+        // Devolviendo datos de operacion fallida por una mala peticion
+        $response = new Response(json_encode(array('fail' => "Los datos han sido enviados incompletos")));
+        $response->headers->set('Content-Type', 'application/json');
+        $response->setStatusCode(Response::HTTP_BAD_REQUEST);
+
+        return $response;
     }
 
 }

@@ -22,33 +22,26 @@ class GestionesController extends AbstractController
      */
     public function index(GestionRepository $gestionRepository, RequestStack $requestStack): Response
     {
+        //Comprobando autorizacion de acceso
         $session = $requestStack->getSession();
         if (!$session->get("login", null)){
             return $this->redirectToRoute('login');
             
         }
+        //renderizando la pantalla
         $gestiones = $gestionRepository->findAll();
             return $this->render('gestiones/index.html.twig', [
                 'controller_name' => 'GestionesController',
                 'gestiones' => $gestiones,
                 'user'=>$session->get("nombre", "admin"),
             ]);
-        // }else{
-        //     $_SESSION["anuma"] = true;
-        //     return $this->redirectToRoute('login');
-
-        // }
     }
     /**
      * @Route("/api/nueva-gestion-cliente", name="nuevaGestionCliente",  methods={"GET"})
      */
     public function newGestionCliente(GestionRepository $gestionRepository, RequestStack $requestStack, GestionClienteManager $em, Request $request): Response
     {
-        // $session = $requestStack->getSession();
-        // if (!$session->get("login", null)){
-        //     return $this->redirectToRoute('login');
-            
-        // }
+        //Comprobando autorizacion de acceso
         $session = $requestStack->getSession();
         if (!$session->get("login", null)){
             $response = new Response(json_encode(array('error'=>'Acceso denegado')));
@@ -57,36 +50,31 @@ class GestionesController extends AbstractController
 
             return $response;
         }
+        //comprobando que la peticion posea los parametros correctos
         if(isset($_GET['idGestion'])){
             $idGestion = (int)$_GET['idGestion'];
 
+            //creando nueva gestion de cliente
             $gestionCliente = new GestionCliente();
             $gestionCliente->setIdGestion($idGestion);
             $gestionCliente->setAtendido(FALSE);
             $gestionCliente->setFechaCreacion(new \DateTime('NOW'));
 
+            //almacenando gestion
             $em->crear($gestionCliente);
 
+            //devolviendo datos de operacion exitosa
             $response = new Response(json_encode(array('success'=>'Creado con exito', 'id'=>$gestionCliente->getId())));
             $response->headers->set('Content-Type', 'application/json');
             $response->setStatusCode(Response::HTTP_CREATED);
 
             return $response;
         }
+        // Devolviendo datos de operacion fallida por una mala peticion
         $response = new Response(json_encode(array('fail' => "Error obteniendo la gestion")));
         $response->headers->set('Content-Type', 'application/json');
         $response->setStatusCode(Response::HTTP_BAD_REQUEST);
 
         return $response;
-        // $gestiones = $gestionRepository->findAll();
-        //     return $this->render('gestiones/index.html.twig', [
-        //         'controller_name' => 'GestionesController',
-        //         'gestiones' => $gestiones,
-        //     ]);
-        // }else{
-        //     $_SESSION["anuma"] = true;
-        //     return $this->redirectToRoute('login');
-
-        // }
     }
 }
