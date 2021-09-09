@@ -1,0 +1,137 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset("css/tiket.css") }}">
+{% endblock %}
+
+{% block title %}Tikets{% endblock %}
+
+{% block User %}{{ user }}{% endblock %}
+
+{% block body %}
+<main class="py-4">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="card">
+                <div class="card-header" id="tiket-Titulo">Tiket</div>
+
+                <div class="card-body" style="max-height: 550px; overflow:hidden;">
+                    <div class="row">
+                        <div class="w-75">
+                            <form action="">
+                                <input type="hidden" value="-1" id="idTiket">
+                                <div class="">
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text" id="basic-addon1">Nombre:</span>
+                                                <input id="nombre" type="text" class="form-control" placeholder="Nombre"
+                                                    aria-label="Username" aria-describedby="basic-addon1">
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text" id="basic-addon1">Apellido:</span>
+                                                <input id="apellido" type="text" class="form-control" placeholder="Apellido"
+                                                    aria-label="Username" aria-describedby="basic-addon1">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text" id="basic-addon1">Dirección:</span>
+                                                <input id="direccion" type="text" class="form-control" placeholder="Dirección"
+                                                    aria-label="Username" aria-describedby="basic-addon1">
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text" id="basic-addon1">Telefono:</span>
+                                                <input id="telefono" type="text" class="form-control" placeholder="Telefono"
+                                                    aria-label="Username" aria-describedby="basic-addon1">
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+                                    <div class="row mb-3">
+                                        <div class="col input-group">
+                                            <label for="gestion-relizada" class="input-group-text">Gestion real
+                                                realizada:</label>
+                                            <select id="gestion-real" class="form-select" aria-label="Default select"
+                                                name="gestion-realizada">
+
+                                                {% for gestion in gestiones %}
+                                                <option value="{{ gestion.id }}">{{ gestion.nombreGestion }}</option>
+                                                {% endfor %}
+
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col">
+                                            <div class="input-group">
+                                                <span class="input-group-text">Problema expuesto por el cliente: </span>
+                                                <textarea id="problema-expuesto" class="form-control" aria-label="With textarea"
+                                                    style="height: 90px;"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col">
+                                            <div class="input-group">
+                                                <span class="input-group-text">Solucion brindada: </span>
+                                                <textarea id="solucion-brindada" class="form-control" aria-label="With textarea"
+                                                    style="height: 90px;"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button id="guardar-tiket" type="button" class="btn btn-primary btn-sm">Guardar tiket</button>
+                            </form>
+                        </div>
+                        <div class="w-25">
+                            <div class="btn-group">
+                                <button id="atender-cliente" type="button" class="btn btn-primary btn-sm">Atender Cliente</button>
+                                <button id="update-list" type="button" class="btn btn-secondary btn-sm">Actualizar lista de tikets</button>
+                                <input id="gestion-a-atender" type="hidden" value="-1" />
+                                <input id="gestion-en-atencion" type="hidden" value="-1" />
+                            </div>
+                            <div style="max-height: 300px!important; overflow-y: scroll;">
+                                <table class="table table-hover caption-top h-75">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col"># Tiket</th>
+                                            <th scope="col">Gestión Solicitada</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="table-body">
+                                        <tr id="loading-row" class="container">
+                                            <td colspan="2" class="justify-content-center">
+                                                <div class="d-flex justify-content-center">
+                                                    <div class="spinner-border text-primary" role="status">
+                                                        <span class="visually-hidden">Loading...</span>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+    
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</main>
+{% endblock %}
+
+{% block javascripts %}
+<script src="{{ asset('js/tiket.js') }}"></script>
+{% endblock %}

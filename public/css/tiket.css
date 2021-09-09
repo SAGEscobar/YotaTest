@@ -1,0 +1,8 @@
+.selectable-row{
+  cursor: pointer;
+}
+.selected-row{
+  --bs-table-accent-bg: rgba(0, 0, 0, 0.25) !important;
+  color: #111519 !important;
+  font-weight: 600;
+}

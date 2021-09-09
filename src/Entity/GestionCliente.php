@@ -7,20 +7,21 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=GestionClienteRepository::class)
+ * @ORM\Table(name="gestioncliente")
  */
 class GestionCliente
 {
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", name="idgestioncliente")
      */
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=45)
+     * @ORM\Column(type="integer", name="idGestion")
      */
-    private $codigoGestion;
+    private $idGestion;
 
     /**
      * @ORM\Column(type="boolean")
@@ -28,7 +29,7 @@ class GestionCliente
     private $atendido;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", name="fechaCreacion")
      */
     private $fechaCreacion;
 
@@ -37,14 +38,14 @@ class GestionCliente
         return $this->id;
     }
 
-    public function getCodigoGestion(): ?string
+    public function getIdGestion(): ?int
     {
-        return $this->codigoGestion;
+        return $this->idGestion;
     }
 
-    public function setCodigoGestion(string $codigoGestion): self
+    public function setIdGestion(int $idGestion): self
     {
-        $this->codigoGestion = $codigoGestion;
+        $this->idGestion = $idGestion;
 
         return $this;
     }

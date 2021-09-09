@@ -18,11 +18,6 @@ class Usuario
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=45, name="codigoUsuario")
-     */
-    private $codigoUsuario;
-
-    /**
      * @ORM\Column(type="string", length=45)
      */
     private $login;
@@ -45,18 +40,6 @@ class Usuario
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getCodigoUsuario(): ?string
-    {
-        return $this->codigoUsuario;
-    }
-
-    public function setCodigoUsuario(string $codigoUsuario): self
-    {
-        $this->codigoUsuario = $codigoUsuario;
-
-        return $this;
     }
 
     public function getLogin(): ?string

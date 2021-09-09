@@ -13,50 +13,33 @@ class Gestion
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", name="idgestion")
      */
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=45)
-     */
-    private $codigoGestion;
-
-    /**
-     * @ORM\Column(type="string", length=70)
+     * @ORM\Column(type="string", length=70, name="nombreGestion")
      */
     private $nombreGestion;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", name="aplicaVisitaTecnica")
      */
     private $aplicaVisitaTecnica;
 
     /**
-     * @ORM\Column(type="string", length=45)
+     * @ORM\Column(type="integer", length=45, name="idUsuario")
      */
-    private $codigoUsuario;
+    private $idUsuario;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", name="fechaCreacion")
      */
     private $fechaCreacion;
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getCodigoGestion(): ?string
-    {
-        return $this->codigoGestion;
-    }
-
-    public function setCodigoGestion(string $codigoGestion): self
-    {
-        $this->codigoGestion = $codigoGestion;
-
-        return $this;
     }
 
     public function getNombreGestion(): ?string
@@ -83,14 +66,14 @@ class Gestion
         return $this;
     }
 
-    public function getCodigoUsuario(): ?string
+    public function getIdUsuario(): ?int
     {
-        return $this->codigoUsuario;
+        return $this->idUsuario;
     }
 
-    public function setCodigoUsuario(string $codigoUsuario): self
+    public function setIdUsuario(int $codigoUsuario): self
     {
-        $this->codigoUsuario = $codigoUsuario;
+        $this->idUsuario = $idUsuario;
 
         return $this;
     }
